@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}검색: {{ keyword }}{% endblock %}
+{% block content %}
+<h1>"{{ keyword }}" 검색 결과 ({{ results|length }}건)</h1>
+<ul class="file-list">
+    {% for f in results %}
+    <li>
+        <b><a href="{{ url_for('file_view', file_id=f.id) }}">{{ f.title }}</a></b>
+        {% if f.description %}<br><span class="desc">{{ f.description }}</span>{% endif %}
+        <br><span class="meta">{{ f.uploaded_at }} · {{ f.original_filename }}</span>
+        <a href="{{ url_for('file_view', file_id=f.id) }}">[보기]</a>
+        <a href="{{ url_for('download', file_id=f.id) }}">[다운로드]</a>
+        {% if not f.category_id %}
+            <a href="{{ url_for('classify', file_id=f.id) }}">[분류하기]</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

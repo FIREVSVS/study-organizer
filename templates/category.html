@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<p class="breadcrumb">
+    <a href="{{ url_for('index') }}">홈</a>
+    {% for b in breadcrumb %}
+        &gt;
+        {% if loop.last %}
+            <b>{{ b.name }}</b>
+        {% else %}
+            <a href="{{ url_for('category_view', category_id=b.id) }}">{{ b.name }}</a>
+        {% endif %}
+    {% endfor %}
+</p>
+
+<div class="title-row">
+    <h1>{{ category.name }}</h1>
+    <button type="button" class="gear-btn" onclick="toggleSettings()" title="분야 설정">&#9881;</button>
+</div>
+
+<div id="categorySettings" class="settings-panel" hidden>
+    <h3>분야 설정</h3>
+
+    <form method="post" action="{{ url_for('category_rename', category_id=category.id) }}"
+          class="settings-item">
+        <label>이름 변경</label>
+        <div class="inline-row">
+            <input type="text" name="new_name" value="{{ category.name }}" required>
+            <button type="submit">변경</button>
+        </div>
+    </form>
+
+    <form method="post" action="{{ url_for('category_delete', category_id=category.id) }}"
+          class="settings-item"
+          onsubmit="return confirm('이 분야를 삭제할까요? 하위 분야도 함께 삭제되고, 파일은 미분류로 남습니다.');">
+        <label>분야 삭제</label>
+        <div class="inline-row">
+            <span class="warn-text">하위 분야도 함께 삭제됩니다.</span>
+            <button type="submit" class="danger">삭제</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function toggleSettings() {
+        const panel = document.getElementById("categorySettings");
+        panel.hidden = !panel.hidden;
+    }
+</script>
+
+{% if subcategories %}
+<h2>하위 분야</h2>
+<div class="category-grid">
+    {% for c in subcategories %}
+    <a class="category-card" href="{{ url_for('category_view', category_id=c.id) }}">{{ c.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h2>이 분야의 파일 ({{ files|length }}건)</h2>
+{% if files %}
+<ul class="file-list">
+    {% for f in files %}
+    <li>
+        <b><a href="{{ url_for('file_view', file_id=f.id) }}">{{ f.title }}</a></b>
+        {% if f.description %}<br><span class="desc">{{ f.description }}</span>{% endif %}
+        <br><span class="meta">{{ f.uploaded_at }} · {{ f.original_filename }}</span>
+        <a href="{{ url_for('file_view', file_id=f.id) }}">[보기]</a>
+        <a href="{{ url_for('download', file_id=f.id) }}">[다운로드]</a>
+        <form method="post" action="{{ url_for('file_delete', file_id=f.id) }}"
+              style="display:inline" onsubmit="return confirm('삭제할까요?');">
+            <button type="submit" class="danger-inline">[삭제]</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="note">이 분야에는 아직 파일이 없습니다.</p>
+{% endif %}
+
+{% endblock %}

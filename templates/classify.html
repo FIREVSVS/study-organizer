@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}분류하기{% endblock %}
+{% block content %}
+<h1>"{{ f.title }}" 분류하기</h1>
+{% if f.description %}<p class="desc">{{ f.description }}</p>{% endif %}
+
+{% if ai_error %}
+<div class="ai-error">
+    <p>AI 분류 제안을 가져오지 못했습니다: {{ ai_error }}</p>
+    <p class="note">
+        .env 파일에 GROK_API_KEY가 설정되어 있는지 확인하세요.
+        API 없이도 아래에서 수동으로 분류할 수 있습니다.
+    </p>
+</div>
+{% elif suggestion %}
+<div class="suggestion-box">
+    <p>AI 제안 경로:</p>
+    <p class="suggested-path">{{ suggestion.path | join(' > ') }}</p>
+    <p class="reasoning">이유: {{ suggestion.reasoning }}</p>
+    {% if suggestion.is_new_category %}
+    <p class="note">※ 기존에 없던 새 분야입니다. "예"를 누르면 새로 만들어집니다.</p>
+    {% endif %}
+
+    <form method="post" style="display:inline">
+        <input type="hidden" name="suggested_path" value="{{ suggestion.path | join(' > ') }}">
+        <button type="submit" name="action" value="accept">예, 여기에 저장</button>
+        <button type="submit" name="action" value="reject">아니요, 다른 제안 받기</button>
+    </form>
+</div>
+
+{% if exclude_paths %}
+<p class="note">이미 거절한 경로: {{ exclude_paths | join(' / ') }}</p>
+{% endif %}
+{% endif %}
+
+<h2>직접 분류하기</h2>
+<form method="post">
+    <input type="text" name="manual_path" placeholder="예: 물리 > 양자역학" style="width:100%;">
+    <br><br>
+    <button type="submit" name="action" value="manual">이 경로로 저장</button>
+</form>
+
+{% if existing_paths %}
+<h2>현재 분야 구조 (참고용)</h2>
+<ul>
+    {% for p in existing_paths %}<li>{{ p }}</li>{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

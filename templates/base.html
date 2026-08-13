@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}내 학습 자료 정리소{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">홈</a>
+        <a href="{{ url_for('upload') }}">파일 업로드</a>
+        <a href="{{ url_for('map_view') }}">지도 보기</a>
+        <form action="{{ url_for('search') }}" method="get" class="nav-search">
+            <input type="text" name="q" placeholder="검색...">
+        </form>
+    </nav>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash">{% for m in messages %}{{ m }}{% endfor %}</div>
+        {% endif %}
+    {% endwith %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

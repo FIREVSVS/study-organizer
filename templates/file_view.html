@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ f.title }}{% endblock %}
+{% block content %}
+
+{% if breadcrumb %}
+<p class="breadcrumb">
+    <a href="{{ url_for('index') }}">홈</a>
+    {% for b in breadcrumb %}
+        &gt; <a href="{{ url_for('category_view', category_id=b.id) }}">{{ b.name }}</a>
+    {% endfor %}
+</p>
+{% endif %}
+
+<h1>{{ f.title }}</h1>
+{% if f.description %}<p class="desc">{{ f.description }}</p>{% endif %}
+<p class="meta">{{ f.uploaded_at }} · {{ f.original_filename }}</p>
+
+<p>
+    <a href="{{ url_for('download', file_id=f.id) }}">
+        <button type="button">다운로드</button>
+    </a>
+    {% if kind != 'none' %}
+    <a href="{{ url_for('file_raw', file_id=f.id) }}" target="_blank">
+        <button type="button">새 탭에서 크게 보기</button>
+    </a>
+    {% endif %}
+    <form method="post" action="{{ url_for('file_delete', file_id=f.id) }}"
+          style="display:inline" onsubmit="return confirm('삭제할까요?');">
+        <button type="submit" class="danger">삭제</button>
+    </form>
+</p>
+
+<hr>
+
+{% if kind == 'image' %}
+    <img class="preview-image" src="{{ url_for('file_raw', file_id=f.id) }}" alt="{{ f.title }}">
+
+{% elif kind == 'pdf' %}
+    <iframe class="preview-pdf" src="{{ url_for('file_raw', file_id=f.id) }}"></iframe>
+    <p class="note">
+        PDF가 안 보이면 "새 탭에서 크게 보기"를 눌러주세요. (브라우저 설정에 따라
+        내장 뷰어가 막혀 있을 수 있습니다.)
+    </p>
+
+{% elif kind == 'text' %}
+    {% if text_error %}
+        <p class="note">파일을 읽지 못했습니다: {{ text_error }}</p>
+    {% else %}
+        <pre class="preview-text">{{ text_content }}</pre>
+    {% endif %}
+
+{% else %}
+    <div class="note">
+        이 형식({{ f.original_filename.rsplit('.', 1)[-1] }})은 브라우저에서 바로 볼 수 없습니다.
+        다운로드해서 해당 프로그램(한글, 워드, 파워포인트 등)으로 열어주세요.
+    </div>
+{% endif %}
+
+{% endblock %}

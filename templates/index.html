@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}홈{% endblock %}
+{% block content %}
+<h1>내 학습 자료 정리소</h1>
+
+<h2>분야</h2>
+{% if categories %}
+<div class="category-grid">
+    {% for c in categories %}
+    <a class="category-card" href="{{ url_for('category_view', category_id=c.id) }}">{{ c.name }}</a>
+    {% endfor %}
+</div>
+{% else %}
+<p class="note">아직 만들어진 분야가 없습니다. 파일을 업로드하면 AI가 분야를 제안해줍니다.</p>
+{% endif %}
+
+{% if uncategorized %}
+<h2>미분류 파일 ({{ uncategorized|length }}건)</h2>
+<ul>
+    {% for f in uncategorized %}
+    <li>
+        <a href="{{ url_for('file_view', file_id=f.id) }}">{{ f.title }}</a>
+        <a href="{{ url_for('classify', file_id=f.id) }}">[분류하기]</a>
+        <a href="{{ url_for('download', file_id=f.id) }}">[다운로드]</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

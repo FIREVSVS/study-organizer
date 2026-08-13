@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}지도 보기{% endblock %}
+{% block content %}
+<h1>자료 지도</h1>
+<p class="note">
+    분야 전체를 한눈에 조망하는 화면. 각 구역이 대분류, 그 안의 타일이 하위분야이며,
+    타일 크기는 (하위 포함) 파일 수에 비례한다. 자료가 어느 분야에 쌓여 있고
+    어디가 비어 있는지 시각적으로 파악할 수 있다. 타일을 클릭하면 해당 분야로 이동.
+</p>
+
+{% if map_data %}
+<div id="treemap"></div>
+{% else %}
+<p class="note">아직 분야가 없습니다. 파일을 업로드해서 분야를 만들어보세요.</p>
+{% endif %}
+
+<script>
+    const mapData = {{ map_data | tojson }};
+</script>
+<script src="{{ url_for('static', filename='treemap.js') }}"></script>
+{% endblock %}
