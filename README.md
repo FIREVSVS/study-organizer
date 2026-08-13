@@ -1,7 +1,7 @@
 # study_organizer
 
 공부하면서 모은 자료를 학문 > 분야 구조로 정리하는 개인 로컬 사이트.
-파일을 업로드하면 Grok API(AI)가 제목/설명을 보고 "물리 > 양자역학에 저장할까요?"
+파일을 업로드하면 groq API(AI)가 제목/설명을 보고 "물리 > 양자역학에 저장할까요?"
 라고 제안하고, 예/아니요로 답하면서 정리해나가는 방식.
 
 ## 기능
@@ -19,10 +19,10 @@
    ```
    pip install -r requirements.txt
    ```
-3. `.env.example`을 복사해서 `.env` 파일을 만들고, Grok API 키 입력:
+3. `.env.example`을 복사해서 `.env` 파일을 만들고, groq API 키 입력:
    ```
-   GROK_API_KEY=발급받은_키
-   GROK_MODEL=grok-4
+   groq_API_KEY=발급받은_키
+   groq_MODEL=groq-4
    ```
    - 키 발급: https://console.x.ai (유료, 사용량 기반 과금)
    - 모델명이 만료됐다면 https://docs.x.ai/docs/models 에서 최신 이름 확인
@@ -39,7 +39,7 @@
 ## 파일 구성
 - `app.py`            Flask 라우트 (진입점)
 - `db.py`             SQLite - 계층형 카테고리 트리 + 파일 메타데이터
-- `ai_classifier.py`  Grok API 호출, 분류 제안 (OpenAI SDK 호환 방식)
+- `ai_classifier.py`  groq API 호출, 분류 제안 (OpenAI SDK 호환 방식)
 - `templates/`        HTML 템플릿
 - `static/style.css`  스타일
 - `uploads/`          업로드된 파일 원본 저장 위치 (자동 생성)
